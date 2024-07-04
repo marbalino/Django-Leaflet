@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapping App</title>
+    <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+    <style>
+        #map {
+            height: 600px; /* Adjust height as needed */
+        }
+        .btn-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="mb-4">Map of Locations</h2>
+        <div id="map"></div>
+    </div>
+
+    <!-- Include Leaflet JavaScript -->
+    <script src="{% static 'leaflet/leaflet.js' %}"></script>
+
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        // Add default tile layer (street map)
+        var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Add satellite tile layer
+        var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+
+        // Layer control for switching between street map and satellite
+        var baseLayers = {
+            "Street Map": streetLayer,
+            "Satellite": satelliteLayer
+        };
+
+        L.control.layers(baseLayers).addTo(map);
+
+        var locations = [
+            { name: "Location A", latitude: 51.5, longitude: -0.09 },
+            { name: "Location B", latitude: 51.51, longitude: -0.1 }
+        ];
+
+        locations.forEach(function(location) {
+            L.marker([location.latitude, location.longitude]).addTo(map)
+                .bindPopup(location.name);
+        });
+    </script>
+</body>
+</html>
+
